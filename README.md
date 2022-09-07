@@ -17,6 +17,7 @@ It should be used together with this slide deck.
 ### Step by step guide
 
 * Edit `01_biglake_spark/bootstrap/variables.json` file
+* * Pay special attention of the location (region), some services are not yet fully avaliable in all regions (e.g. dataform)
 * Deploy infra by launching the bootstrap script
 ```bash
 $ cd 01_biglake_spark/bootstrap
