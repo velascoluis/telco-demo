@@ -1,0 +1,7 @@
+config {
+  type: "declaration",
+  database: "PROJECT_ID",  
+  schema: "BQ_DATASET_NAME",
+  name: "service_data",
+  description : "Service data staged. BigLake table"
+}

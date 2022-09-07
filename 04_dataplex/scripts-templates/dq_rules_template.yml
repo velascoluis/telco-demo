@@ -1,0 +1,32 @@
+metadata_registry_defaults:
+ dataplex:
+   projects: PROJECT_ID
+   locations: LOCATION 
+   lakes: telco-datalake
+   zones: staging
+
+# You have to define a NONE row filter
+row_filters:
+ NONE:
+   filter_sql_expr: |-
+      True
+
+rule_dimensions:
+  - correctness
+
+rules:
+ GENDER_RULE:
+   rule_type: CUSTOM_SQL_EXPR
+   dimension: correctness
+   params:
+     custom_sql_expr: |-
+       $column in ('Male','Female')
+
+
+rule_bindings:
+  GENDER_RULE_CUSTOMERS:
+    entity_uri: dataplex://zones/staging/entities/data_customers_raw_data
+    column_id: gender
+    row_filter_id: NONE
+    rule_ids:
+      - GENDER_RULE

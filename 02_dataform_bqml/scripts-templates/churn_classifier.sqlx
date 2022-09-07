@@ -1,0 +1,17 @@
+config {
+  type: 'operations',
+  hasOutput: true,
+  schema: "BQ_DATASET_NAME_models",
+  tags: ["ml_models"],
+  description: "XgBoost chrun predictor"
+}
+CREATE OR REPLACE MODEL ${self()} 
+OPTIONS(MODEL_TYPE='BOOSTED_TREE_CLASSIFIER',
+        BOOSTER_TYPE = 'GBTREE',
+        NUM_PARALLEL_TREE = 1,
+        MAX_ITERATIONS = 10,
+        TREE_METHOD = 'HIST',
+        EARLY_STOP = FALSE,
+        SUBSAMPLE = 0.85,
+        INPUT_LABEL_COLS = ['Churn'])
+AS SELECT * FROM  ${ref('customer_augmented')}
