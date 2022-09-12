@@ -3,7 +3,7 @@ config {
     schema: "BQ_DATASET_NAME_transformed",
     tags: ["transformed_data"],
     assertions : {
-        rowConditions: ["Churn ==  0 or Churn == 1"],
+        rowConditions: ["Churn =  0 or Churn = 1"],
         nonNull: ["customerId"],
         uniqueKey: ["customerId"]
                 }
