@@ -17,15 +17,15 @@
 # shellcheck disable=SC2129
 
 
-TERRAFORM_BIN=`which terraform`
+BQ_BIN=`which bq`
 GCLOUD_BIN=`which gcloud`
 JQ_BIN=`which jq`
 
 
 LOG_DATE=`date`
 echo "###########################################################################################"
-echo "${LOG_DATE} Telco demo Deploy 02 - Starting  .."
-echo "${LOG_DATE} This scripts stages a data pipeline in dataform  .."
+echo "${LOG_DATE} Telco demo Deploy 05 - Starting  .."
+echo "${LOG_DATE} This scripts generates a remote cloud function callable from BQ  .."
 
 if [ "${#}" -ne 1 ]; then
     echo "Illegal number of parameters. Exiting ..."
@@ -112,20 +112,40 @@ fi
 
 LOG_DATE=`date`
 echo "###########################################################################################"
-echo "${LOG_DATE} Calling dataform python SDK  ..."
-
-DATAFORM_REPO_NAME="telco_demo_repo"
-DATAFORM_WORKSPACE_NAME="telco_demo_ws"
-pip3 install --upgrade pip
-python3 -m venv local_test_env
-source local_test_env/bin/activate
-pip3 install -r requirements.txt
-python3 dataform_bqml_demo.py --project_id ${PROJECT_ID} --location ${REGION} --repository_name ${DATAFORM_REPO_NAME} --workspace_name ${DATAFORM_WORKSPACE_NAME} --bq_dataset_name ${BQ_DATASET_NAME} 
-deactivate
-
+echo "${LOG_DATE} Deploying cloud function  ..."
+CFN_NAME="telco-demo-cfn"
+CODE_DIR=${PWD}/../scripts-templates
+cd ${CODE_DIR}
+"${GCLOUD_BIN}" functions deploy ${CFN_NAME} --runtime python310 --gen2 --trigger-http --allow-unauthenticated --region ${REGION}
+if [ ! "${?}" -eq 0 ];then
+    LOG_DATE=`date`
+    echo "Unable to run ${GCLOUD_BIN} functions deploy ${CFN_NAME} --runtime python310 --gen2 --trigger-http --allow-unauthenticated --region ${REGION}"
+    echo "Exiting ..."
+    exit 1
+fi
+echo "Getting URI .."
+CFN_URI=`"${GCLOUD_BIN}" functions describe ${CFN_NAME} --gen2 --region ${REGION} --format="value(serviceConfig.uri)"`
+if [ ! "${?}" -eq 0 ];then
+    LOG_DATE=`date`
+    echo "Unable to run ${GCLOUD_BIN} functions describe ${CFN_NAME} --gen2 --region ${REGION} --format=value(serviceConfig.uri)"
+    echo "Exiting ..."
+    exit 1
+fi
+echo "URI: ${CFN_URI}"
+LOG_DATE=`date`
+echo "###########################################################################################"
+echo "${LOG_DATE} Creating remote function on BigQuery  ..."
+#Convert - to _ as required by BQ
+CFN_NAME_TX=`echo "${CFN_NAME}" | tr '-' '_'`
+CREATE_FN_SQL="CREATE OR REPLACE FUNCTION \`${PROJECT_ID}.${BQ_DATASET_NAME}_transformed.${CFN_NAME_TX}\`(meanThr_DL FLOAT64, meanThr_UL FLOAT64, maxThr_DL FLOAT64, maxThr_UL FLOAT64, meanUE_DL FLOAT64, meanUE_UL FLOAT64, maxUE_DL FLOAT64, maxUE_UL FLOAT64, maxUE_UL_DL FLOAT64 ) RETURNS FLOAT64 REMOTE WITH CONNECTION \`${PROJECT_ID}.${REGION}.biglake-telco-demo\` OPTIONS (endpoint='${CFN_URI}')"
+echo "Executing ${CREATE_FN_SQL} ..."
+${BQ_BIN} query --nouse_legacy_sql "${CREATE_FN_SQL}"
+if [ ! "${?}" -eq 0 ];then
+    LOG_DATE=`date`
+    echo "Unable to run ${BQ_BIN} query --nouse_legacy_sql ${CREATE_FN_SQL}"
+    echo "Exiting ..."
+    exit 1
+fi
 LOG_DATE=`date`
 echo "###########################################################################################"
 echo "${LOG_DATE} Execution finished! ..."
-
-
-

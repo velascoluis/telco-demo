@@ -61,7 +61,7 @@ $ source dataform_bqml_demo.sh variables.json
 
 ### Step by step guide
 
-* You should have executed first the lab 01 and lab 02 to generate the data in BQ
+* You should have executed  lab 01 and lab 02 to generate the data in BQ
 * Execute this script from the BQ GUI to generate A LOT (500GB or so) of data, be careful with the costs:
 ```sql
 DECLARE n int64;
@@ -110,7 +110,7 @@ GROUP BY
 
 ### Step by step guide
 
-* You should have executed first the lab 01 and lab 02 to generate the data in BQ
+* You should have executed lab 01 and lab 02 to generate the data in BQ
 * Edit `04_dataplex/bootstrap/variables.json` file
 * Deploy the data lake taxonomy
 ```bash
@@ -121,5 +121,44 @@ $ source dataplex_demo.sh variables.json
 * From the GUI launch a new DQ Task using the rules on `${BUCKET_NAME}/code/dq_rules_templates.yml`
 * NOTE: You might need to wait for the discovery task to kick in and registger the entities (GCS tables) inside the assets
 
+
+## Demo 5 : Remote Cloud Functions / Cloud Run from BigQuery
+
+### Overview
+
+**Objective:** Shows the integration between BigQuery UDFs with Cloud Functions 
+
+- Use the CLI to deploy a python cloud function that uses a external package (e.g. numpy)
+- Deploy a remote UDF at BQ that ends calling up the cloud function
+
+
+### Step by step guide
+
+* You should have executed labs 01 and lab 02 to generate the data in BQ
+* Edit `05_remote_cfn/bootstrap/variables.json` file
+* Deploy the cloud function and the remote UDF
+```bash
+cd 05_remote_cfn/bootstrap
+$ source remote_cfn_demo.sh variables.json
+```
+* Now, go to BQ and launch the folowing SQL:
+
+```sql
+SELECT
+    `<PROJECT_ID>.telco_demo_velascoluis_dev_sandbox_transformed.telco_demo_cfn`(
+        meanThr_DL ,
+        meanThr_UL ,
+        maxThr_DL ,
+        maxThr_UL ,
+        meanUE_DL ,
+        meanUE_UL ,
+        maxUE_DL ,
+        maxUE_UL ,
+        maxUE_UL_DL) AS matrix_determinant
+FROM
+    `<PROJECT_ID>.telco_demo_velascoluis_dev_sandbox_transformed.customer_augmented`
+WHERE
+    tenure < 1
+```
 
 NOTE: This demo uses some of the data and scripts from  [Spark serverless workshop - Cell Tower Anomaly Detection.](https://github.com/velascoluis/serverless-spark-workshop/tree/main/cell-tower-anomaly-detection)

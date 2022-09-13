@@ -132,3 +132,7 @@ sed -i s/PROJECT_ID/${PROJECT_ID}/g ${DQ_RULES_PATH}
 sed -i s/LOCATION/${REGION}/g ${DQ_RULES_PATH}
 
 gsutil cp ${DQ_RULES_PATH} gs://${BUCKET_NAME}/code/${DQ_RULES_FILE}
+
+LOG_DATE=`date`
+echo "###########################################################################################"
+echo "${LOG_DATE} Execution finished! ..."
