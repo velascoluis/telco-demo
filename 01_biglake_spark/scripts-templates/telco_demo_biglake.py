@@ -18,7 +18,6 @@ import argparse
 
 
 def exec_telco_demo_biglake(project_id, dataset_name, table_name):
-    #spark =SparkSession.builder.appName("exec_telco_demo_biglake_exploration").config('spark.jars', 'gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar').getOrCreate()
     spark =SparkSession.builder.appName("exec_telco_demo_biglake_exploration").getOrCreate()
     rows = spark.read.format('bigquery').option('table', project_id+':'+dataset_name+'.'+table_name).load()
     rows.show()
