@@ -71,14 +71,14 @@ CREATE TABLE `<PROJECT_ID>.telco_demo_dataset_transformed.customer_augmented_mat
 SELECT
     *
 FROM
-    `<PROJECT_ID>.telco_demo_dataset_transformed.customer_augmented`;
+    `<PROJECT_ID>.<BQ_DATASET_NAME>.customer_augmented`;
 WHILE i < n DO
 INSERT INTO
-  `<PROJECT_ID>.telco_demo_dataset_transformed.customer_augmented_mat`
+  `<PROJECT_ID>.<BQ_DATASET_NAME>.customer_augmented_mat`
 SELECT
   *
 FROM
-  `<PROJECT_ID>.telco_demo_dataset_transformed.customer_augmented_mat`;
+  `<PROJECT_ID>.<BQ_DATASET_NAME>.customer_augmented_mat`;
   SET i = i + 1;
 END WHILE
 ;
