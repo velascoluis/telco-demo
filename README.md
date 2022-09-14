@@ -145,7 +145,7 @@ $ source remote_cfn_demo.sh variables.json
 
 ```sql
 SELECT
-    `<PROJECT_ID>.telco_demo_velascoluis_dev_sandbox_transformed.telco_demo_cfn`(
+    `<PROJECT_ID>.<BQ_DATASET_NAME>.telco_demo_cfn`(
         meanThr_DL ,
         meanThr_UL ,
         maxThr_DL ,
