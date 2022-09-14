@@ -91,7 +91,7 @@ SELECT
   InternetService,
   tenure
 FROM
-  `<PROJECT_ID>.telco_demo_dataset_transformed.customer_augmented_mat`
+  `<PROJECT_ID>.<BQ_DATASET_NAME>.customer_augmented_mat`
 GROUP BY
   CellTower,
   InternetService,
