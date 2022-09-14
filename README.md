@@ -156,7 +156,7 @@ SELECT
         maxUE_UL ,
         maxUE_UL_DL) AS matrix_determinant
 FROM
-    `<PROJECT_ID>.telco_demo_velascoluis_dev_sandbox_transformed.customer_augmented`
+    `<PROJECT_ID>.<BQ_DATASET_NAME>.customer_augmented`
 WHERE
     tenure < 1
 ```
