@@ -1,7 +1,7 @@
 # Telco demo : A GCP Data Platform tour
 
 The aim of this demo is to present various specific differential aspects of the Google Cloud data platform using a telco dataset as a proxy to conduct the demo. The demo is structured on 4 parts.
-It should be used together with this slide deck.
+
 
 ## Demo 1 : DataLake+EDWH convergence: BigLake, SPARK serverless and terraform
 
