@@ -18,7 +18,7 @@ It should be used together with this slide deck.
 
 * Edit `01_biglake_spark/bootstrap/variables.json` file
 * * Pay special attention of the location (region), some services are not yet fully avaliable in all regions (e.g. dataform)
-* Deploy infra by launching the bootstrap script
+* Deploy infra by launching the bootstrap script **Cloud Shell**
 ```bash
 $ cd 01_biglake_spark/bootstrap
 source spark_biglake_demo.sh variables.json deploy
@@ -40,13 +40,17 @@ source spark_biglake_demo.sh variables.json deploy
 ### Step by step guide
 
 * You should have executed first the lab 01 to stage the data in BQ
-* Edit `02_dataform_bqml/bootstrap/variables.json` file
-* Deploy the repo, workspace and stage the pipelie by executing
+* From **Cloud Shell**, Edit `02_dataform_bqml/bootstrap/variables.json` file
+* Deploy the repo, workspace and stage the pipeline by executing from **Cloud Shell**
 ```bash
 cd 02_dataform_bqml/bootstrap
 $ source dataform_bqml_demo.sh variables.json
 ```
+* Give permissions to the recently created dataform service account, follow [this](https://cloud.google.com/dataform/docs/required-access)
 * Now, go to BigQuery dataform and review the repository
+
+**_NOTE:_**  Once you are inside the dataform code repository, open the `package.json` file and click on "INSTALL PACKAGES"
+
 * Execute the workflow
 * See the XGBoost model created
 
@@ -71,14 +75,14 @@ CREATE TABLE `<PROJECT_ID>.telco_demo_dataset_transformed.customer_augmented_mat
 SELECT
     *
 FROM
-    `<PROJECT_ID>.<BQ_DATASET_NAME>.customer_augmented`;
+    `<PROJECT_ID>.telco_demo_dataset_transformed.customer_augmented`;
 WHILE i < n DO
 INSERT INTO
-  `<PROJECT_ID>.<BQ_DATASET_NAME>.customer_augmented_mat`
+  `<PROJECT_ID>.telco_demo_dataset_transformed.customer_augmented_mat`
 SELECT
   *
 FROM
-  `<PROJECT_ID>.<BQ_DATASET_NAME>.customer_augmented_mat`;
+  `<PROJECT_ID>.telco_demo_dataset_transformed.customer_augmented_mat`;
   SET i = i + 1;
 END WHILE
 ;
@@ -91,7 +95,7 @@ SELECT
   InternetService,
   tenure
 FROM
-  `<PROJECT_ID>.<BQ_DATASET_NAME>.customer_augmented_mat`
+  `<PROJECT_ID>.telco_demo_dataset_transformed.customer_augmented_mat`
 GROUP BY
   CellTower,
   InternetService,
@@ -145,7 +149,7 @@ $ source remote_cfn_demo.sh variables.json
 
 ```sql
 SELECT
-    `<PROJECT_ID>.<BQ_DATASET_NAME>.telco_demo_cfn`(
+    `<PROJECT_ID>.telco_demo_velascoluis_dev_sandbox_transformed.telco_demo_cfn`(
         meanThr_DL ,
         meanThr_UL ,
         maxThr_DL ,
@@ -156,9 +160,10 @@ SELECT
         maxUE_UL ,
         maxUE_UL_DL) AS matrix_determinant
 FROM
-    `<PROJECT_ID>.<BQ_DATASET_NAME>.customer_augmented`
+    `<PROJECT_ID>.telco_demo_velascoluis_dev_sandbox_transformed.customer_augmented`
 WHERE
     tenure < 1
 ```
 
 NOTE: This demo uses some of the data and scripts from  [Spark serverless workshop - Cell Tower Anomaly Detection.](https://github.com/velascoluis/serverless-spark-workshop/tree/main/cell-tower-anomaly-detection)
+
